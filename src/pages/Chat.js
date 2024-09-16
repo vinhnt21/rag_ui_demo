@@ -4,7 +4,7 @@ import {ask} from "../services/api.chat";
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
-    const [question, setQuestion] = useState('Tôi muốn mua kìm chết');
+    const [question, setQuestion] = useState('');
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const Chat = () => {
         e.preventDefault();
         if (!question) return;
         const userMessage = {role: "user", message: question};
-        // setQuestion('');
+        setQuestion('');
         setMessages([...messages, userMessage]);
         try {
             const response = await ask(question);
@@ -38,7 +38,7 @@ const Chat = () => {
     }
     return (
         <div className="container border shadow-2xl bg-gray-50 h-screen mx-auto p-8">
-            <h1 className={`font-bold text-2xl text-center`}>Demo PrivateGPT Chat</h1>
+            <h1 className={`font-bold text-2xl text-center`}>Demo Chatbot</h1>
             <div className={`container h-5/6 overflow-y-auto mb-8`}>
                 {messages.map((message, index) => {
                     return <Message key={index} role={message.role} message={message.message} source={message?.source}/>
