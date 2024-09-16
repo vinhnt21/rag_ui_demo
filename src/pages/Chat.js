@@ -20,9 +20,12 @@ const Chat = () => {
         if (!question) return;
         const userMessage = {role: "user", message: question};
         setQuestion('');
-        setMessages([...messages, userMessage]);
+        setMessages([...messages, userMessage,{role: "chatbot", message: "Tôi đang tìm kiếm thông tin, vui lòng chờ trong giây lát..."}]);
         try {
+            //add message "loading"
             const response = await ask(question);
+            //remove message "loading"
+            setMessages(messages.slice(0, messages.length - 1));
             const chatbotMessage = {role: "chatbot", message: response.data
                     .message, source: response.data.source};
             setMessages([...messages, userMessage, chatbotMessage]);
@@ -33,12 +36,11 @@ const Chat = () => {
     }
 
     const handleOnchangeInput = (e) => {
-        console.log(question);
         setQuestion(e.target.value);
     }
     return (
         <div className="container border shadow-2xl bg-gray-50 h-screen mx-auto p-8">
-            <h1 className={`font-bold text-2xl text-center`}>Demo Chatbot</h1>
+            <h1 className={`font-bold text-2xl text-center`}>MRO Chatbot Demo</h1>
             <div className={`container h-5/6 overflow-y-auto mb-8`}>
                 {messages.map((message, index) => {
                     return <Message key={index} role={message.role} message={message.message} source={message?.source}/>
