@@ -15,19 +15,40 @@ const Chat = () => {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
     }
+
+    const getCurrentMessages = (messages) => {
+        /**
+         * return last 5 message between human and system pairs, excluding last pair
+         * if less than 5 pair return all (exclude last pair)
+         */
+        if (messages.length <= 2) {
+            return [];
+        } else if (messages.length <= 10) {
+            return messages.slice(0, -2)
+        } else {
+            return messages.slice(-12, -2)
+        }
+    }
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         if (!question) return;
         const userMessage = {role: "user", message: question};
         setQuestion('');
-        setMessages([...messages, userMessage,{role: "chatbot", message: "Tôi đang tìm kiếm thông tin, vui lòng chờ trong giây lát..."}]);
+        setMessages([...messages, userMessage, {
+            role: "chatbot",
+            message: "Tôi đang tìm kiếm thông tin, vui lòng chờ trong giây lát..."
+        }]);
         try {
             //add message "loading"
-            const response = await ask(question);
+            const history_chat = getCurrentMessages(messages)
+            const response = await ask(question, history_chat);
             //remove message "loading"
             setMessages(messages.slice(0, messages.length - 1));
-            const chatbotMessage = {role: "chatbot", message: response.data
-                    .message, source: response.data.source};
+            const chatbotMessage = {
+                role: "chatbot", message: response.data
+                    .message, source: response.data.source
+            };
             setMessages([...messages, userMessage, chatbotMessage]);
         } catch (error) {
             const chatbotMessage = {role: "chatbot", message: error.message};
